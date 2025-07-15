@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title data-i18n="verifyTitle">التحقق من المستأجر</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .camera-frame {width:100%; max-width:900px; margin:auto; margin-top:2rem;}
+    .iframe-holder {border-radius:18px; box-shadow:0 6px 32px #0002; overflow:hidden;}
+    @media (max-width:600px) {.camera-frame{max-width:100%;}}
+    .lang-switcher {position:fixed;top:14px;right:14px;}
+    .hide {display:none;}
+    .action-button {margin-bottom:1rem;}
+  </style>
+</head>
+<body>
+  <div class="lang-switcher">
+    <button id="languageButton" onclick="toggleLanguage()">🌐</button>
+  </div>
+  <div class="container">
+    <h1 data-i18n="verifyTitle">التحقق من المستأجر</h1>
+    <input
+      type="text"
+      id="ipIframeUrl"
+      data-i18n="ipCamIframePlaceholder"
+      placeholder="أدخل رابط الكاميرا مثل http://192.168.1.132:6677/index"
+      style="width:100%;margin-bottom:0.5rem;padding:8px 12px;border-radius:9px;border:1px solid #ccc;">
+    <button id="showCamBtn" onclick="changeIframeUrl()" class="action-button" data-i18n="showCamPageBtn">🎥 عرض واجهة الكاميرا</button>
+    <button id="hideCamBtn" onclick="hideIframeAndGoOptions()" class="action-button hide" style="background:#d7383a;color:#fff;" data-i18n="hideCamPageBtn">🛑 إيقاف عرض الكاميرا</button>
+    <div class="camera-frame hide" id="camFrameSection">
+      <div class="iframe-holder">
+        <iframe id="ipCameraIframe"
+          src=""
+          width="100%" height="600"
+          allow="camera; microphone"
+          style="border:0; min-height:500px; background:#fff;">
+        </iframe>
+      </div>
+    </div>
+  </div>
+  <script>
+    // ترجمة تلقائية
+    const translations = {
+      ar: {
+        verifyTitle: "التحقق من المستأجر",
+        ipCamIframePlaceholder: "أدخل رابط الكاميرا مثل http://192.168.1.132:6677/index",
+        showCamPageBtn: "🎥 عرض واجهة الكاميرا",
+        hideCamPageBtn: "🛑 إيقاف عرض الكاميرا"
+      },
+      en: {
+        verifyTitle: "Tenant Verification",
+        ipCamIframePlaceholder: "Enter camera URL e.g. http://192.168.1.132:6677/index",
+        showCamPageBtn: "🎥 Show Camera Page",
+        hideCamPageBtn: "🛑 Hide Camera Page"
+      }
+    };
+    let currentLang = localStorage.getItem('language') || 'ar';
+    function updateLanguage() {
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLang][key]) {
+          if (el.tagName === 'INPUT') {
+            el.placeholder = translations[currentLang][key];
+          } else {
+            el.textContent = translations[currentLang][key];
+          }
+        }
+      });
+    }
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      localStorage.setItem('language', currentLang);
+      updateLanguage();
+    }
+    function changeIframeUrl() {
+      let url = document.getElementById('ipIframeUrl').value.trim();
+      if (!/^https?:\/\//i.test(url)) url = 'http://' + url;
+      document.getElementById('ipCameraIframe').src = url;
+      document.getElementById('camFrameSection').classList.remove('hide');
+      document.getElementById('hideCamBtn').classList.remove('hide');
+      document.getElementById('showCamBtn').classList.add('hide');
+      document.getElementById('ipIframeUrl').setAttribute('readonly','readonly');
+    }
+    function hideIframeAndGoOptions() {
+      document.getElementById('camFrameSection').classList.add('hide');
+      document.getElementById('ipCameraIframe').src = "";
+      document.getElementById('hideCamBtn').classList.add('hide');
+      document.getElementById('showCamBtn').classList.remove('hide');
+      document.getElementById('ipIframeUrl').removeAttribute('readonly');
+      // التوجيه لصفحة الخيارات
+      window.location.href = 'options.html';
+    }
+    document.addEventListener('DOMContentLoaded', updateLanguage);
+  </script>
+</body>
+</html>

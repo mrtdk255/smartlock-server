@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Remote Unlock</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- زر تغيير اللغة -->
+  <div class="language-switcher">
+    <button id="languageButton">🌐</button>
+  </div>
+
+  <!-- واجهة التحكم -->
+  <div class="container">
+    <h1 data-i18n="remoteUnlockTitle">فتح القفل عن بعد</h1>
+    <input type="text" id="boxNumber" placeholder="" data-i18n="boxNumberPlaceholder" />
+    <button class="action-button" id="sendBtn" data-i18n="sendRemoteUnlock"></button>
+    <button class="action-button" id="backBtn" data-i18n="backBtn"></button>
+  </div>
+
+  <!-- حاوية التوست -->
+  <div id="toast-container-top" class="toast-container top"></div>
+
+  <!-- صوت الإشعار -->
+  <audio id="toast-sound" src="https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3" preload="auto"></audio>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <!-- سكربت -->
+  <script src="script-remote.js"></script>
+</body>
+</html>

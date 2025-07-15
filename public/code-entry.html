@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="codeEntryTitle">إدخال رمز الدخول</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="language-switcher">
+    <button id="languageButton" onclick="toggleLanguage()">🌐</button>
+  </div>
+
+  <div class="container">
+    <h1 data-i18n="codeEntryTitle"></h1>
+    <input type="text" id="entryCode" data-i18n="codePlaceholder">
+    <!-- خانة جديدة لإدخال رقم الصندوق -->
+    <input type="text" id="boxNumber" data-i18n="boxNumber" placeholder="رقم الصندوق">
+    <button class="action-button" data-i18n="generateCodeBtn" onclick="generateCode()"></button>
+    
+    <div id="activationSection" class="hidden">
+      <input type="date" id="entryDate">
+      <input type="time" id="entryTime">
+      <button class="action-button" data-i18n="activateBtn" onclick="activateCode()"></button>
+    </div>
+    
+    <!-- زر إرسال البريد مع تمرير كل البيانات بالرابط -->
+    <button class="action-button" data-i18n="emailTitle"
+      onclick="navigateTo('email-entry.html?code=' + encodeURIComponent(document.getElementById('entryCode').value) + '&box=' + encodeURIComponent(document.getElementById('boxNumber').value))">
+    </button>
+    <button class="action-button" data-i18n="backBtn" onclick="navigateTo('options.html')"></button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

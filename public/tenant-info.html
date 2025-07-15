@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="searchTitle">معلومات المستأجر</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- خطوط Google (تاجوال وRoboto Mono) لرمز القفل والأرقام -->
+  <link href="https://fonts.googleapis.com/css?family=Tajawal:400,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap" rel="stylesheet">
+  <style>
+    /* تنسيقات إضافية للواجهة الجديدة */
+    .tenant-card {
+      background: var(--background);
+      border-radius: 1.2rem;
+      box-shadow: 0 4px 14px 0 rgba(0,0,0,0.11);
+      padding: 1.5rem 1rem;
+      margin: 1rem 0;
+      text-align: start;
+      animation: fadeIn 0.8s;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .tenant-card strong {
+      min-width: 100px;
+      display: inline-block;
+      font-weight: bold;
+    }
+    .lock-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0.6em 0 0.6em 0;
+      font-size: 1.1em;
+    }
+    .lock-icon {
+      font-size: 1.32em;
+      color: #d3b03d;
+    }
+    .lock-code {
+      font-family: 'Roboto Mono', monospace;
+      font-weight: bold;
+      letter-spacing: 2px;
+      direction: ltr;
+      background: rgba(211,176,61,0.11);
+      padding: 3px 10px;
+      border-radius: 7px;
+      font-size: 1.12em;
+      margin-right: 2px;
+    }
+    .remaining-time {
+      background: #7ca1a6;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 1em;
+      margin-top: 12px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .delete-button {
+      margin-top: 0.7rem;
+      background: #e74c3c;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.6rem;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .delete-button:hover {
+      background: #c0392b;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem 0.5rem;
+      }
+      .tenant-card {
+        padding: 1.2rem 0.5rem;
+        font-size: 1em;
+      }
+      .lock-code {
+        font-size: 1em;
+        padding: 3px 7px;
+      }
+      .remaining-time {
+        padding: 7px 8px;
+        font-size: 0.97em;
+      }
+    }
+    @media (max-width: 400px) {
+      .tenant-card {
+        padding: 0.7rem 0.2rem;
+        font-size: 0.95em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- زر تغيير اللغة -->
+  <div class="language-switcher">
+    <button id="languageButton" onclick="toggleLanguage()">🌐</button>
+  </div>
+  <div class="container">
+    <h1 data-i18n="searchTitle">معلومات المستأجر</h1>
+    <div id="tenantInfo"></div>
+    <button class="action-button" onclick="navigateTo('options.html')" data-i18n="backBtn">🔙 عودة</button>
+  </div>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="script-info.js"></script>
+</body>
+</html>

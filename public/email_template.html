@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f9f9f9; padding: 20px; color: #333; }
+    .email-container { background: #ffffff; border-radius: 10px; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #ddd; }
+    h2 { color: #0044cc; }
+    p { line-height: 1.6; font-size: 16px; }
+    .info-box { background: #f1f1f1; padding: 15px 22px; border-radius: 8px; margin: 16px 0; }
+    .section-title { margin-top: 24px; font-weight: bold; font-size: 18px; }
+    .access-code-label { font-size: 17px; font-weight: bold; color: #b28800; margin-bottom: 7px; }
+    .access-code-value {
+      font-size: 2.2rem;
+      letter-spacing: 7px;
+      color: #fff;
+      background: linear-gradient(90deg, #fad96f, #f3c42c 85%, #c29e3e);
+      border-radius: 14px;
+      padding: 13px 0;
+      text-align: center;
+      font-weight: 900;
+      margin-bottom: 13px;
+      box-shadow: 0 4px 16px #efd98433;
+      word-break: break-all;
+      user-select: all;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <h2>🔐 رمز الدخول الجديد</h2>
+    <p>تم توليد رمز دخول جديد لهذا الصندوق:</p>
+    <div class="info-box">
+      <p><strong>📦 رقم الصندوق:</strong> {{box}}</p>
+      <div class="access-code-label">رمز الدخول:</div>
+      <div class="access-code-value">{{code}}</div>
+      <p><strong>⏱️ الوقت:</strong> {{time_ar}}</p>
+    </div>
+    <p class="section-title">New access code details (English):</p>
+    <div class="info-box">
+      <p><strong>📦 Box Number:</strong> {{box}}</p>
+      <div class="access-code-label" style="color:#00728c;">Access Code:</div>
+      <div class="access-code-value" style="background:linear-gradient(90deg, #8ee2f5, #2947a9 80%, #00c6fb); color:#fff;">{{code}}</div>
+      <p><strong>⏱️ Time:</strong> {{time_en}}</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="searchTitle">البحث عن مستأجر</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- زر تغيير اللغة -->
+  <div class="language-switcher">
+    <button id="languageButton" onclick="toggleLanguage()">🌐</button>
+  </div>
+
+  <div class="container">
+    <h1 data-i18n="searchTitle">البحث عن مستأجر</h1>
+    <input type="tel" id="searchPhone" placeholder="أدخل رقم الهاتف" data-i18n="phonePlaceholder">
+    <input type="email" id="searchEmail" placeholder="أدخل البريد الإلكتروني" data-i18n="emailPlaceholder">
+    <button class="action-button" onclick="searchTenant()" data-i18n="searchBtn">🔍 بحث</button>
+    <button class="action-button" onclick="navigateTo('options.html')" data-i18n="backBtn">🔙 عودة</button>
+  </div>
+  
+  <!-- مكتبات Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <!-- إعدادات Firebase -->
+  <script src="firebase-config.js"></script>
+  <!-- سكريبت صفحة البحث -->
+  <script src="script-search.js"></script>
+</body>
+</html>

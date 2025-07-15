@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="resetCodeTitle">إعادة تعيين رمز الدخول</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="language-switcher">
+    <button id="languageButton" onclick="toggleLanguage()">🌐</button>
+  </div>
+  <div class="container">
+    <h1 data-i18n="resetCodeTitle"></h1>
+    <input type="text" id="boxNumber" data-i18n="boxNumberPlaceholder" placeholder="رقم الصندوق">
+    <button class="action-button" id="fetchBoxCodeBtn" data-i18n="showCurrentCodeBtn"></button>
+    <div id="codeInfo" class="hidden">
+      <div id="currentCodeDisplay"></div>
+      <div id="codeStatus"></div>
+      <button class="action-button" id="resetCodeBtn" data-i18n="resetCodeBtn"></button>
+    </div>
+    <div id="generateSection" class="hidden">
+      <input type="text" id="newEntryCode" readonly>
+      <button class="action-button" id="generateAndSaveNewCodeBtn" data-i18n="generateAndSaveNewCodeBtn"></button>
+    </div>
+    <button class="action-button" data-i18n="backBtn" onclick="navigateTo('options.html')"></button>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

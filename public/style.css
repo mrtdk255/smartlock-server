@@ -1,0 +1,262 @@
+:root {
+  --primary: #d3b03d;
+  --secondary: #95b2cf;
+  --background: rgba(255, 255, 255, 0.15);
+  --text: #1a1010;
+}
+
+* {
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('background.gif') fixed center/cover;
+  color: var(--text);
+  overflow-y: auto;
+}
+
+.language-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+#languageButton {
+  background: rgba(248, 245, 245, 0);
+  border: none;
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+  font-size: 1.5rem;
+}
+
+#languageButton:hover {
+  transform: rotate(20deg);
+}
+
+.container {
+  background: var(--background);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  backdrop-filter: blur(20px);
+  width: 90%;
+  max-width: 500px;
+  margin: 1rem;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.action-button {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  border-radius: 0.8rem;
+  width: 100%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1.05); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1.05); }
+}
+
+.action-button:active {
+  transform: scale(0.98);
+}
+
+input {
+  width: 100%;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  border-radius: 0.8rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text);
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+.hidden {
+  display: none;
+}
+
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="ltr"] {
+  text-align: left;
+}
+
+/* Toast notification styles */
+.toast-container.center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-container.top {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast {
+  background: linear-gradient(135deg, #5A9, #7CA);
+  color: #fff;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  font-weight: bold;
+  opacity: 0;
+  animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  10%, 90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* بطاقة مستأجر متجاوبة وحديثة */
+.tenant-card {
+  background: var(--background);
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 14px 0 rgba(0,0,0,0.11);
+  padding: 1rem 0.6rem;
+  margin: 1rem 0;
+  text-align: start;
+  animation: fadeIn 0.8s;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* باقي التفاصيل داخل البطاقة */
+.lock-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0.5em 0;
+  font-size: 1.1em;
+}
+.lock-icon {
+  font-size: 1.28em;
+  color: #d3b03d;
+}
+.lock-code {
+  font-weight: bold;
+  letter-spacing: 2px;
+  direction: ltr;
+  background: rgba(211,176,61,0.07);
+  padding: 2px 6px;
+  border-radius: 7px;
+  font-family: 'monospace', 'Tajawal', sans-serif;
+  font-size: 1.08em;
+}
+
+.remaining-time {
+  background-color: #7ca1a6;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #fff;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+/* Media Queries للشاشات الصغيرة جداً */
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.4rem;
+    border-radius: 1rem;
+  }
+  .tenant-card {
+    padding: 0.7rem 0.2rem;
+    font-size: 0.97em;
+    max-width: 260px;
+  }
+  .action-button, input {
+    padding: 0.7rem;
+    font-size: 1.1rem;
+  }
+  h1 {
+    font-size: 1.2rem;
+  }
+  .lock-code {
+    font-size: 0.99em;
+    padding: 2px 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  .container {
+    padding: 0.5rem 0.1rem;
+    border-radius: 0.7rem;
+  }
+  .tenant-card {
+    padding: 0.45rem 0.09rem;
+    font-size: 0.92em;
+    max-width: 210px;
+  }
+}
