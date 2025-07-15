@@ -258,7 +258,7 @@ async function sendCodeEmail() {
   }
 
   try {
-    const response = await fetch('http://localhost:5000/send-email', {
+    const response = await fetch('https://smartlock-server.onrender.com/send-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -479,7 +479,7 @@ if (location.pathname.endsWith('reset-code.html')) {
       const now = new Date();
       const timeAr = now.toLocaleString('ar-EG', { hour12: false });
       const timeEn = now.toLocaleString('en-US', { hour12: false });
-      const response = await fetch('http://localhost:5000/send-email', {
+      const response = await fetch('https://smartlock-server.onrender.com/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
