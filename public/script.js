@@ -160,6 +160,17 @@ async function activateCode() {
       const codeRef = firebase.database().ref(`accessCodes/${code}`);
       const expirationTime = `${date}T${time}:00`;
 
+      const expirationDate = new Date(expirationTime).getTime();
+      const currentTime = new Date().getTime();
+      const timeUntilExpiration = expirationDate - currentTime;
+
+      if (timeUntilExpiration < 60000) {
+        showNotification(currentLang === 'ar'
+          ? 'يجب أن يكون وقت الانتهاء بعد الوقت الحالي بدقيقة واحدة على الأقل'
+          : 'Expiration time must be at least one minute in the future');
+        return;
+      }
+
       await codeRef.set({
         code: code,
         boxNumber: boxNumber,
@@ -167,16 +178,10 @@ async function activateCode() {
         activatedAt: new Date().toISOString()
       });
 
-      const expirationDate = new Date(expirationTime).getTime();
-      const currentTime = new Date().getTime();
-      const timeUntilExpiration = expirationDate - currentTime;
-
-      if (timeUntilExpiration > 0) {
-        setTimeout(() => {
-          codeRef.remove();
-          console.log('تم حذف الرمز تلقائيًا');
-        }, timeUntilExpiration);
-      }
+      setTimeout(() => {
+        codeRef.remove();
+        console.log('تم حذف الرمز تلقائيًا');
+      }, timeUntilExpiration);
 
       showNotification(currentLang === 'ar'
         ? 'تم التفعيل بنجاح، انتقل لإرسال رمز الدخول بالبريد'
@@ -195,6 +200,7 @@ async function activateCode() {
       : 'Please fill all fields!');
   }
 }
+
 
 function sendRemoteUnlock() {
   const boxNumberElem = document.getElementById('boxNumber');
