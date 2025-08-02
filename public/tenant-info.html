@@ -5,22 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="searchTitle">معلومات المستأجر</title>
   <link rel="stylesheet" href="style.css">
-  <!-- خطوط Google (تاجوال وRoboto Mono) لرمز القفل والأرقام -->
   <link href="https://fonts.googleapis.com/css?family=Tajawal:400,700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap" rel="stylesheet">
   <style>
-    /* تنسيقات إضافية للواجهة الجديدة */
     .tenant-card {
       background: var(--background);
       border-radius: 1.2rem;
       box-shadow: 0 4px 14px 0 rgba(0,0,0,0.11);
       padding: 1.5rem 1rem;
-      margin: 1rem 0;
+      margin: 1rem auto;
       text-align: start;
       animation: fadeIn 0.8s;
       max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
     }
     .tenant-card strong {
       min-width: 100px;
@@ -31,7 +27,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin: 0.6em 0 0.6em 0;
+      margin: 0.6em 0;
       font-size: 1.1em;
     }
     .lock-icon {
@@ -73,33 +69,9 @@
     .delete-button:hover {
       background: #c0392b;
     }
-    @media (max-width: 600px) {
-      .container {
-        padding: 1rem 0.5rem;
-      }
-      .tenant-card {
-        padding: 1.2rem 0.5rem;
-        font-size: 1em;
-      }
-      .lock-code {
-        font-size: 1em;
-        padding: 3px 7px;
-      }
-      .remaining-time {
-        padding: 7px 8px;
-        font-size: 0.97em;
-      }
-    }
-    @media (max-width: 400px) {
-      .tenant-card {
-        padding: 0.7rem 0.2rem;
-        font-size: 0.95em;
-      }
-    }
   </style>
 </head>
 <body>
-  <!-- زر تغيير اللغة -->
   <div class="language-switcher">
     <button id="languageButton" onclick="toggleLanguage()">🌐</button>
   </div>
@@ -108,7 +80,6 @@
     <div id="tenantInfo"></div>
     <button class="action-button" onclick="navigateTo('options.html')" data-i18n="backBtn">🔙 عودة</button>
   </div>
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="firebase-config.js"></script>
