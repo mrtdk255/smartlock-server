@@ -94,12 +94,18 @@ function calculateRemainingTime(departureDate) {
     : `${days} days and ${hours} hours remaining`;
 }
 
-// عرض مستأجر واحد فقط
+// عرض مستأجر بناءً على البريد الإلكتروني المخزن
 function displayTenants() {
+  const targetEmail = localStorage.getItem('tenantEmail');
   const tenantRef = firebase.database().ref('tenants');
   const accessCodesRef = firebase.database().ref('accessCodes');
   const container = document.getElementById('tenantInfo');
   container.innerHTML = '';
+
+  if (!targetEmail) {
+    container.innerHTML = `<div class="tenant-card"><p>يرجى إدخال البريد الإلكتروني أولا</p></div>`;
+    return;
+  }
 
   tenantRef.once('value')
     .then(async snapshot => {
@@ -112,40 +118,53 @@ function displayTenants() {
       const accessCodesSnap = await accessCodesRef.once('value');
       const accessCodes = accessCodesSnap.val() || {};
 
+      let foundTenant = null;
+      let foundKey = null;
+
       for (const [key, t] of Object.entries(tenants)) {
-        const remTime = calculateRemainingTime(t.checkout || t.checkin);
-
-        let lockCode = t.unlockCode || t.code || 'N/A';
-        if ((lockCode === 'N/A' || !lockCode) && t.boxNumber) {
-          const found = Object.values(accessCodes).find(
-            c => c.boxNumber == t.boxNumber
-          );
-          lockCode = found ? (found.code || found.unlockCode || 'N/A') : 'N/A';
+        if ((t.email || '').toLowerCase() === targetEmail.toLowerCase()) {
+          foundTenant = t;
+          foundKey = key;
+          break;
         }
-
-        container.innerHTML += `
-          <div class="tenant-card">
-            <p><strong>${translationsInfo[currentLang].name}:</strong> ${t.name || 'N/A'}</p>
-            <p><strong>${translationsInfo[currentLang].phone}:</strong> ${t.phone || 'N/A'}</p>
-            <p><strong>${translationsInfo[currentLang].email}:</strong> ${t.email || 'N/A'}</p>
-            <p><strong>${translationsInfo[currentLang].checkin}:</strong> ${t.checkin || 'N/A'}</p>
-            <p><strong>${translationsInfo[currentLang].checkout}:</strong> ${t.checkout || 'N/A'}</p>
-            <p><strong>${translationsInfo[currentLang].boxNumber}:</strong> ${t.boxNumber || 'N/A'}</p>
-            <p class="lock-line">
-              <strong>${translationsInfo[currentLang].unlockCode}:</strong>
-              <span class="lock-icon">🔒</span>
-              <span class="lock-code">${lockCode}</span>
-            </p>
-            <p class="remaining-time">
-              <strong>${translationsInfo[currentLang].remainingTime}:</strong> ${remTime}
-            </p>
-            <button class="delete-button" onclick="deleteTenant('${key}')">
-              ${translationsInfo[currentLang].deleteBtn}
-            </button>
-          </div>
-        `;
-        break; // إيقاف بعد أول مستأجر
       }
+
+      if (!foundTenant) {
+        container.innerHTML = `<div class="tenant-card"><p>${translationsInfo[currentLang].noData}</p></div>`;
+        return;
+      }
+
+      const remTime = calculateRemainingTime(foundTenant.checkout || foundTenant.checkin);
+      let lockCode = foundTenant.unlockCode || foundTenant.code || 'N/A';
+
+      if ((lockCode === 'N/A' || !lockCode) && foundTenant.boxNumber) {
+        const found = Object.values(accessCodes).find(
+          c => c.boxNumber == foundTenant.boxNumber
+        );
+        lockCode = found ? (found.code || found.unlockCode || 'N/A') : 'N/A';
+      }
+
+      container.innerHTML = `
+        <div class="tenant-card">
+          <p><strong>${translationsInfo[currentLang].name}:</strong> ${foundTenant.name || 'N/A'}</p>
+          <p><strong>${translationsInfo[currentLang].phone}:</strong> ${foundTenant.phone || 'N/A'}</p>
+          <p><strong>${translationsInfo[currentLang].email}:</strong> ${foundTenant.email || 'N/A'}</p>
+          <p><strong>${translationsInfo[currentLang].checkin}:</strong> ${foundTenant.checkin || 'N/A'}</p>
+          <p><strong>${translationsInfo[currentLang].checkout}:</strong> ${foundTenant.checkout || 'N/A'}</p>
+          <p><strong>${translationsInfo[currentLang].boxNumber}:</strong> ${foundTenant.boxNumber || 'N/A'}</p>
+          <p class="lock-line">
+            <strong>${translationsInfo[currentLang].unlockCode}:</strong>
+            <span class="lock-icon">🔒</span>
+            <span class="lock-code">${lockCode}</span>
+          </p>
+          <p class="remaining-time">
+            <strong>${translationsInfo[currentLang].remainingTime}:</strong> ${remTime}
+          </p>
+          <button class="delete-button" onclick="deleteTenant('${foundKey}')">
+            ${translationsInfo[currentLang].deleteBtn}
+          </button>
+        </div>
+      `;
     })
     .catch(err => {
       console.error(err);
