@@ -94,7 +94,7 @@ function calculateRemainingTime(departureDate) {
     : `${days} days and ${hours} hours remaining`;
 }
 
-// عرض قائمة المستأجرين مع جلب رمز القفل من accessCodes إن لم يوجد في بيانات المستأجر
+// عرض مستأجر واحد فقط
 function displayTenants() {
   const tenantRef = firebase.database().ref('tenants');
   const accessCodesRef = firebase.database().ref('accessCodes');
@@ -109,14 +109,12 @@ function displayTenants() {
         return;
       }
 
-      // اجلب كل الأكواد مرة واحدة
       const accessCodesSnap = await accessCodesRef.once('value');
       const accessCodes = accessCodesSnap.val() || {};
 
-      Object.entries(tenants).forEach(([key, t]) => {
+      for (const [key, t] of Object.entries(tenants)) {
         const remTime = calculateRemainingTime(t.checkout || t.checkin);
 
-        // جلب رمز القفل بحسب رقم الصندوق إذا لم يكن موجود
         let lockCode = t.unlockCode || t.code || 'N/A';
         if ((lockCode === 'N/A' || !lockCode) && t.boxNumber) {
           const found = Object.values(accessCodes).find(
@@ -141,13 +139,13 @@ function displayTenants() {
             <p class="remaining-time">
               <strong>${translationsInfo[currentLang].remainingTime}:</strong> ${remTime}
             </p>
-            <button class="delete-button"
-                    onclick="deleteTenant('${key}')">
+            <button class="delete-button" onclick="deleteTenant('${key}')">
               ${translationsInfo[currentLang].deleteBtn}
             </button>
           </div>
         `;
-      });
+        break; // إيقاف بعد أول مستأجر
+      }
     })
     .catch(err => {
       console.error(err);
@@ -183,4 +181,3 @@ document.addEventListener('DOMContentLoaded', () => {
   updateLanguage();
   displayTenants();
 });
-
