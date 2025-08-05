@@ -160,17 +160,6 @@ async function activateCode() {
       const codeRef = firebase.database().ref(`accessCodes/${code}`);
       const expirationTime = `${date}T${time}:00`;
 
-      const expirationDate = new Date(expirationTime).getTime();
-      const currentTime = new Date().getTime();
-      const timeUntilExpiration = expirationDate - currentTime;
-
-      if (timeUntilExpiration < 60000) {
-        showNotification(currentLang === 'ar'
-          ? 'يجب أن يكون وقت الانتهاء بعد الوقت الحالي بدقيقة واحدة على الأقل'
-          : 'Expiration time must be at least one minute in the future');
-        return;
-      }
-
       await codeRef.set({
         code: code,
         boxNumber: boxNumber,
@@ -178,10 +167,16 @@ async function activateCode() {
         activatedAt: new Date().toISOString()
       });
 
-      setTimeout(() => {
-        codeRef.remove();
-        console.log('تم حذف الرمز تلقائيًا');
-      }, timeUntilExpiration);
+      const expirationDate = new Date(expirationTime).getTime();
+      const currentTime = new Date().getTime();
+      const timeUntilExpiration = expirationDate - currentTime;
+
+      if (timeUntilExpiration > 0) {
+        setTimeout(() => {
+          codeRef.remove();
+          console.log('تم حذف الرمز تلقائيًا');
+        }, timeUntilExpiration);
+      }
 
       showNotification(currentLang === 'ar'
         ? 'تم التفعيل بنجاح، انتقل لإرسال رمز الدخول بالبريد'
@@ -200,7 +195,6 @@ async function activateCode() {
       : 'Please fill all fields!');
   }
 }
-
 
 function sendRemoteUnlock() {
   const boxNumberElem = document.getElementById('boxNumber');
@@ -263,19 +257,12 @@ async function sendCodeEmail() {
     return;
   }
 
-async function sendNewCodeEmail(email, box, code) {
   try {
-    console.log('Preparing to send email:', { email, box, code });
-
-    const now = new Date();
-    const timeAr = now.toLocaleString('ar-EG', { hour12: false });
-    const timeEn = now.toLocaleString('en-US', { hour12: false });
-
     const response = await fetch('https://smartlock-server.onrender.com/send-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        tenantEmail: email,
+        tenantEmail,
         boxNumber: box,
         entryCode: code,
         timeAr,
@@ -284,26 +271,25 @@ async function sendNewCodeEmail(email, box, code) {
     });
 
     const result = await response.json();
-    console.log('Email response:', result);
 
-    if (!result.success) throw new Error(result.error);
-
-    showNotification(currentLang === 'ar'
-      ? 'تم إرسال البريد الإلكتروني بنجاح'
-      : 'Email sent successfully'
-    );
-
-    navigateTo('options.html');
-
-  } catch (err) {
-    console.error('Failed to send email:', err);
-    showNotification(currentLang === 'ar'
-      ? 'خطأ في إرسال البريد الإلكتروني'
-      : 'Email send error'
+    if (result.success) {
+      showNotification(
+        currentLang === 'ar'
+          ? 'تم إرسال البريد الإلكتروني بنجاح'
+          : 'Email sent successfully'
+      );
+      navigateTo('options.html');
+    } else {
+      throw new Error(result.error);
+    }
+  } catch (error) {
+    console.error('Email send error:', error);
+    showNotification(
+      currentLang === 'ar'
+        ? 'حدث خطأ أثناء إرسال البريد'
+        : 'Error sending email'
     );
   }
-}
-
 }
 
 // دعم كل مزايا كاميرا IP وظهور رسائل ذكية
@@ -514,4 +500,3 @@ if (location.pathname.endsWith('reset-code.html')) {
     }
   }
 }
-
