@@ -398,16 +398,24 @@ if (location.pathname.endsWith('reset-code.html')) {
           : (currentLang === 'ar' ? "الرمز صالح (أخضر)" : "Valid code (green)");
         document.getElementById('resetCodeBtn').disabled = false;
 
-        // جلب البريد من resetRequests حسب رقم الصندوق
-        const resetReqSnap = await firebase.database().ref('resetRequests').orderByChild('boxNumber').equalTo(boxNumber).once('value');
-        const resetReqData = resetReqSnap.val();
-        if (resetReqData) {
-          // خذ أول طلب فقط (أو يمكنك تطويره لاحقاً لاختيار الأحدث)
-          const firstRequest = Object.values(resetReqData)[0];
-          boxEmail = firstRequest.email || "";
-        } else {
-          boxEmail = "";
-        }
+       // جلب البريد من resetRequests أو tenants حسب رقم الصندوق
+const resetReqSnap = await firebase.database().ref('resetRequests').orderByChild('boxNumber').equalTo(boxNumber).once('value');
+const resetReqData = resetReqSnap.val();
+if (resetReqData) {
+  const firstRequest = Object.values(resetReqData)[0];
+  boxEmail = firstRequest.email || "";
+} else {
+  // إذا لم يوجد طلب في resetRequests، جرب البحث في tenants
+  const tenantsSnap = await firebase.database().ref('tenants').orderByChild('boxNumber').equalTo(boxNumber).once('value');
+  const tenantsData = tenantsSnap.val();
+  if (tenantsData) {
+    const firstTenant = Object.values(tenantsData)[0];
+    boxEmail = firstTenant.email || "";
+  } else {
+    boxEmail = "";
+  }
+}
+
       } else {
         document.getElementById('codeInfo').classList.add('hidden');
         showNotification(currentLang === 'ar' ? 'لم يتم العثور على رمز لهذا الصندوق' : 'No code found for this box');
@@ -500,3 +508,4 @@ if (location.pathname.endsWith('reset-code.html')) {
     }
   }
 }
+
