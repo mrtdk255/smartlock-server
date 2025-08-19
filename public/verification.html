@@ -2,131 +2,67 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>بث مباشر من Larix</title>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <title>البث المباشر من الكاميرا (Larix Broadcaster)</title>
+  <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+
   <style>
     body {
-      background: #111;
+      background-color: #111;
       color: #fff;
-      text-align: center;
       font-family: Arial, sans-serif;
+      text-align: center;
+      direction: rtl;
     }
-    video {
-      width: 80%;
-      height: auto;
-      margin-top: 20px;
-      border: 2px solid #444;
-      border-radius: 8px;
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
     }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      background-color: red;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: darkred;
-    }
-    #status {
+    .status {
       margin-top: 15px;
       font-size: 18px;
       font-weight: bold;
     }
-    .online {
-      color: #00ff00;
-    }
-    .offline {
-      color: #ff4444;
-    }
+    .status.online { color: #0f0; }
+    .status.offline { color: #f00; }
   </style>
 </head>
 <body>
-  <h2>🎥 البث المباشر من الكاميرا (Larix Broadcaster)</h2>
-  
-  <video id="video" controls autoplay></video>
-  <br>
-  <button id="toggleBtn">⏹️ إيقاف البث</button>
-  <p id="status" class="offline">🔴 البث متوقف</p>
+  <div class="container">
+    <h2>📹 البث المباشر (Larix Broadcaster)</h2>
 
+    <!-- مشغل الفيديو -->
+    <video
+      id="liveVideo"
+      class="video-js vjs-default-skin"
+      controls
+      autoplay
+      muted
+      playsinline
+      width="100%"
+      height="400"
+      data-setup='{}'>
+      <source src="https://larixstream.ddns.net/hls/stream.m3u8" type="application/x-mpegURL">
+    </video>
+
+    <!-- حالة البث -->
+    <div id="status" class="status offline">🔴 البث متوقف</div>
+  </div>
+
+  <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
   <script>
-    var video = document.getElementById('video');
-    var toggleBtn = document.getElementById('toggleBtn');
-    var statusText = document.getElementById('status');
-    var videoSrc = "http://155.138.225.232/hls/stream.m3u8"; 
-    var hls;
-    var autoReconnect = true;
-    var reconnectInterval = 5000;
+    var player = videojs('liveVideo');
+    var statusEl = document.getElementById("status");
 
-    function setStatus(online) {
-      if (online) {
-        statusText.textContent = "🟢 البث متصل";
-        statusText.className = "online";
-      } else {
-        statusText.textContent = "🔴 البث متوقف";
-        statusText.className = "offline";
-      }
-    }
-
-    function startStream() {
-      if (Hls.isSupported()) {
-        hls = new Hls();
-        hls.loadSource(videoSrc);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function () {
-          video.play();
-          setStatus(true);
-        });
-
-        // في حال حدوث خطأ
-        hls.on(Hls.Events.ERROR, function (event, data) {
-          if (data.fatal && autoReconnect) {
-            console.warn("⚠️ انقطع البث.. إعادة المحاولة بعد 5 ثوانٍ");
-            setStatus(false);
-            stopStream();
-            setTimeout(startStream, reconnectInterval);
-          }
-        });
-
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = videoSrc;
-        video.play();
-        setStatus(true);
-      }
-    }
-
-    function stopStream() {
-      if (hls) {
-        hls.destroy();
-        hls = null;
-      }
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
-      setStatus(false);
-    }
-
-    // زر التحكم
-    toggleBtn.addEventListener('click', function() {
-      if (video.src || hls) {
-        stopStream();
-        autoReconnect = false;
-        toggleBtn.textContent = "▶️ تشغيل البث";
-        toggleBtn.style.backgroundColor = "green";
-      } else {
-        autoReconnect = true;
-        startStream();
-        toggleBtn.textContent = "⏹️ إيقاف البث";
-        toggleBtn.style.backgroundColor = "red";
-      }
+    player.on('playing', function() {
+      statusEl.textContent = "🟢 البث مباشر الآن";
+      statusEl.className = "status online";
     });
 
-    // تشغيل تلقائي عند فتح الصفحة
-    startStream();
+    player.on('error', function() {
+      statusEl.textContent = "🔴 البث متوقف";
+      statusEl.className = "status offline";
+    });
   </script>
 </body>
 </html>
