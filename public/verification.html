@@ -2,67 +2,92 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>البث المباشر من الكاميرا (Larix Broadcaster)</title>
+  <title>📡 البث المباشر</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
-
   <style>
     body {
-      background-color: #111;
+      background: #111;
       color: #fff;
-      font-family: Arial, sans-serif;
+      font-family: Tahoma, Arial, sans-serif;
       text-align: center;
-      direction: rtl;
+      margin: 0;
+      padding: 0;
     }
     .container {
-      max-width: 800px;
-      margin: auto;
+      margin: 30px auto;
+      max-width: 900px;
       padding: 20px;
     }
-    .status {
-      margin-top: 15px;
-      font-size: 18px;
-      font-weight: bold;
+    .camera-frame {
+      margin-top: 20px;
     }
-    .status.online { color: #0f0; }
-    .status.offline { color: #f00; }
+    .btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+    .btn:hover {
+      background: #218838;
+    }
+    .hide {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>📹 البث المباشر (Larix Broadcaster)</h2>
+    <h2>🎥 البث المباشر عبر HLS</h2>
+
+    <!-- أزرار التحكم -->
+    <div>
+      <button id="showCamBtn" class="btn" onclick="startStream()">عرض البث</button>
+      <button id="hideCamBtn" class="btn hide" onclick="hideStream()">إخفاء البث</button>
+    </div>
 
     <!-- مشغل الفيديو -->
-    <video
-      id="liveVideo"
-      class="video-js vjs-default-skin"
-      controls
-      autoplay
-      muted
-      playsinline
-      width="100%"
-      height="400"
-      data-setup='{}'>
-      <source src="https://larixstream.ddns.net/hls/stream.m3u8" type="application/x-mpegURL">
-    </video>
-
-    <!-- حالة البث -->
-    <div id="status" class="status offline">🔴 البث متوقف</div>
+    <div class="camera-frame hide" id="camFrameSection">
+      <video id="hlsPlayer" class="video-js vjs-default-skin" controls autoplay width="100%" height="500"></video>
+    </div>
   </div>
 
+  <!-- مكتبات HLS و Video.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+
   <script>
-    var player = videojs('liveVideo');
-    var statusEl = document.getElementById("status");
+    // رابط البث ثابت
+    const streamUrl = "https://larixstream.ddns.net/hls/stream.m3u8";
 
-    player.on('playing', function() {
-      statusEl.textContent = "🟢 البث مباشر الآن";
-      statusEl.className = "status online";
-    });
+    function startStream() {
+      const video = document.getElementById('hlsPlayer');
 
-    player.on('error', function() {
-      statusEl.textContent = "🔴 البث متوقف";
-      statusEl.className = "status offline";
-    });
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(streamUrl);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // دعم متصفح Safari
+        video.src = streamUrl;
+        video.addEventListener('loadedmetadata', () => video.play());
+      }
+
+      document.getElementById('camFrameSection').classList.remove('hide');
+      document.getElementById('hideCamBtn').classList.remove('hide');
+      document.getElementById('showCamBtn').classList.add('hide');
+    }
+
+    function hideStream() {
+      document.getElementById('camFrameSection').classList.add('hide');
+      document.getElementById('hideCamBtn').classList.add('hide');
+      document.getElementById('showCamBtn').classList.remove('hide');
+    }
   </script>
 </body>
 </html>
