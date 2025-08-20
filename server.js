@@ -6,7 +6,6 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const fs = require('fs');
-const { createProxyMiddleware } = require('http-proxy-middleware'); // ✅ أضفنا المكتبة
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -14,18 +13,6 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// ✅ إعداد بروكسي للبث HLS من سيرفر Vultr
-app.use(
-  '/hls',
-  createProxyMiddleware({
-    target: 'http://155.138.225.232:8080', // IP السيرفر الخاص بك
-    changeOrigin: true,
-    pathRewrite: {
-      '^/hls': '/hls', // إعادة توجيه نفس المسار
-    },
-  })
-);
 
 // إعداد Gmail OAuth2
 const oauth2Client = new google.auth.OAuth2(
