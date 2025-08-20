@@ -41,7 +41,7 @@
       display: none;
     }
 
-    #resolution-bar {
+    #resolution-bar, #stream-status {
       background: rgba(0, 0, 0, 0.6);
       color: #0f0;
       font-size: 14px;
@@ -50,6 +50,10 @@
       display: inline-block;
       margin-top: 12px;
       font-weight: bold;
+    }
+
+    #stream-status.offline {
+      color: #f00;
     }
   </style>
 </head>
@@ -70,6 +74,7 @@
   <video id="live-video" class="video-js vjs-default-skin" controls autoplay muted playsinline width="640" height="360"></video>
 
   <div id="resolution-bar">📏 الدقة: جاري التحميل...</div>
+  <div id="stream-status" class="offline">🚫 حالة البث: غير متصل</div>
 
   <canvas id="snapshot-canvas"></canvas>
 
@@ -80,6 +85,7 @@
     const video = document.getElementById('live-video');
     const canvas = document.getElementById('snapshot-canvas');
     const resolutionBar = document.getElementById('resolution-bar');
+    const statusBar = document.getElementById('stream-status');
     let hls, isStreaming = false;
 
     const player = videojs('live-video', {
@@ -97,6 +103,10 @@
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
           video.play();
         });
+        hls.on(Hls.Events.ERROR, () => {
+          updateStreamStatus(false);
+        });
+        updateStreamStatus(true);
         isStreaming = true;
       }
     }
@@ -106,10 +116,22 @@
         hls.stopLoad();
         hls.detachMedia();
         hls.destroy();
+        hls = null;
         isStreaming = false;
+        updateStreamStatus(false);
       }
       video.pause();
       video.src = "";
+    }
+
+    function updateStreamStatus(online) {
+      if (online) {
+        statusBar.textContent = "✅ حالة البث: متصل";
+        statusBar.classList.remove("offline");
+      } else {
+        statusBar.textContent = "🚫 حالة البث: غير متصل";
+        statusBar.classList.add("offline");
+      }
     }
 
     function captureAndDownload() {
