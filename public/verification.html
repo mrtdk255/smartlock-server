@@ -2,59 +2,28 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>📡 البث المباشر</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+  <title>🎥 البث المباشر HLS</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
-    body {
-      background: #111;
-      color: #fff;
-      font-family: Tahoma, Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      margin: 30px auto;
-      max-width: 900px;
-      padding: 20px;
-    }
-    video {
-      border: 2px solid #28a745;
-      border-radius: 10px;
-      background: black;
-    }
+    body { background: #111; color: #fff; text-align: center; font-family: Arial; }
+    video { width: 80%; max-width: 800px; margin-top: 30px; border: 2px solid #28a745; border-radius: 8px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>🎥 البث المباشر عبر HLS</h2>
-
-    <!-- مشغل الفيديو -->
-    <video id="hlsPlayer" class="video-js vjs-default-skin" controls autoplay width="100%" height="500"></video>
-  </div>
-
-  <!-- مكتبات HLS و Video.js -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+  <h2>🎥 البث المباشر عبر HLS</h2>
+  <video id="video" controls autoplay></video>
 
   <script>
-    const streamUrl = "https://larixstream.ddns.net"; // رابط البث
-
-    const video = document.getElementById('hlsPlayer');
+    const video = document.getElementById('video');
+    const videoSrc = "https://larixstream.ddns.net/hls/stream.m3u8";
 
     if (Hls.isSupported()) {
       const hls = new Hls();
-      hls.loadSource(streamUrl);
+      hls.loadSource(videoSrc);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // دعم متصفح Safari
-      video.src = streamUrl;
-      video.addEventListener('loadedmetadata', () => video.play());
+      video.src = videoSrc;
     }
   </script>
 </body>
 </html>
-
-
