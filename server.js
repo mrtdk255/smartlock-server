@@ -6,6 +6,7 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const fs = require('fs');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,6 +14,15 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 🔁 Reverse Proxy to larixstream.ddns.net
+app.use('/stream', createProxyMiddleware({
+  target: 'http://larixstream.ddns.net', // عدّل إلى https إذا كنت تستخدم HTTPS
+  changeOrigin: true,
+  pathRewrite: {
+    '^/stream': '',
+  },
+}));
 
 // إعداد Gmail OAuth2
 const oauth2Client = new google.auth.OAuth2(
@@ -73,8 +83,6 @@ app.post('/send-email', async (req, res) => {
   }
 });
 
-
 app.listen(PORT, () => {
   console.log(`🚀 Server is running at: http://localhost:${PORT}`);
 });
-
