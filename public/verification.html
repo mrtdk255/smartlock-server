@@ -55,10 +55,16 @@
 </head>
 <body>
   <h1>🎥 البث المباشر عبر HLS</h1>
-  <button class="btn" onclick="toggleStream()">إخفاء البث</button>
 
   <div class="controls">
+    <button class="btn" onclick="startStream()">▶️ تشغيل البث</button>
+    <button class="btn" onclick="stopStream()">⏹️ إيقاف البث</button>
     <button class="btn" onclick="captureAndDownload()">📸 التقاط و حفظ الصورة</button>
+    <select id="imgQuality" class="btn">
+      <option value="1">🖼️ جودة عالية (100%)</option>
+      <option value="0.8">📷 جودة متوسطة (80%)</option>
+      <option value="0.5">📉 جودة منخفضة (50%)</option>
+    </select>
   </div>
 
   <video id="live-video" class="video-js vjs-default-skin" controls autoplay muted playsinline width="640" height="360"></video>
@@ -74,6 +80,7 @@
     const video = document.getElementById('live-video');
     const canvas = document.getElementById('snapshot-canvas');
     const resolutionBar = document.getElementById('resolution-bar');
+    let hls, isStreaming = false;
 
     const player = videojs('live-video', {
       autoplay: true,
@@ -82,22 +89,27 @@
       fluid: true,
     });
 
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(streamUrl);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play();
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = streamUrl;
-      video.addEventListener('loadedmetadata', () => {
-        video.play();
-      });
+    function startStream() {
+      if (Hls.isSupported() && !isStreaming) {
+        hls = new Hls();
+        hls.loadSource(streamUrl);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.play();
+        });
+        isStreaming = true;
+      }
     }
 
-    function toggleStream() {
-      video.style.display = video.style.display === "none" ? "block" : "none";
+    function stopStream() {
+      if (hls) {
+        hls.stopLoad();
+        hls.detachMedia();
+        hls.destroy();
+        isStreaming = false;
+      }
+      video.pause();
+      video.src = "";
     }
 
     function captureAndDownload() {
@@ -105,7 +117,8 @@
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const dataURL = canvas.toDataURL('image/png');
+      const quality = parseFloat(document.getElementById("imgQuality").value);
+      const dataURL = canvas.toDataURL('image/png', quality);
       const a = document.createElement('a');
       a.href = dataURL;
       a.download = `snapshot_${Date.now()}.png`;
