@@ -16,6 +16,7 @@
     "express": "^4.21.2",
     "googleapis": "^150.0.1",
     "hls.js": "^1.6.10",
+    "http-proxy-middleware": "^3.0.5",
     "nodemailer": "^6.10.1",
     "video.js": "^8.23.4"
   },
