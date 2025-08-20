@@ -10,18 +10,16 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middlewares
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Gmail OAuth2 Setup
+// إعداد Gmail OAuth2
 const oauth2Client = new google.auth.OAuth2(
   process.env.GMAIL_CLIENT_ID,
   process.env.GMAIL_CLIENT_SECRET,
   'https://developers.google.com/oauthplayground'
 );
-
 oauth2Client.setCredentials({
   refresh_token: process.env.GMAIL_REFRESH_TOKEN
 });
@@ -37,12 +35,11 @@ async function createTransporter() {
       clientId: process.env.GMAIL_CLIENT_ID,
       clientSecret: process.env.GMAIL_CLIENT_SECRET,
       refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-      accessToken: accessToken.token,
-    },
+      accessToken: accessToken.token
+    }
   });
 }
 
-// API: إرسال البريد
 app.post('/send-email', async (req, res) => {
   const { tenantEmail, boxNumber, entryCode, timeAr, timeEn } = req.body;
 
@@ -65,7 +62,7 @@ app.post('/send-email', async (req, res) => {
       from: `"Smart Lock App" <${process.env.GMAIL_EMAIL}>`,
       to: tenantEmail,
       subject: '🔐 رمز الدخول',
-      html,
+      html: html,
     };
 
     await transporter.sendMail(mailOptions);
@@ -76,19 +73,8 @@ app.post('/send-email', async (req, res) => {
   }
 });
 
-// API: اختبار أن السيرفر يعمل
-app.get('/health', (req, res) => {
-  res.json({ status: '✅ Server running', time: new Date().toISOString() });
-});
 
-// API: رابط البث (يُستخدم من verification.html)
-app.get('/live', (req, res) => {
-  res.json({
-    hls: "https://larixstream.ddns.net/hls/stream.m3u8",
-  });
-});
-
-// Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server is running at: http://localhost:${PORT}`);
 });
+
