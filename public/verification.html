@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>البث المباشر عبر HLS</title>
+  <title data-i18n="pageTitle">البث المباشر عبر HLS</title>
   <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
   <style>
     body {
@@ -12,12 +12,10 @@
       text-align: center;
       padding: 20px;
     }
-
     h1 {
       margin-bottom: 20px;
       font-size: 28px;
     }
-
     .btn {
       background-color: #28a745;
       border: none;
@@ -28,19 +26,15 @@
       margin: 10px;
       cursor: pointer;
     }
-
     .btn:hover {
       background-color: #218838;
     }
-
     .controls {
       margin-top: 15px;
     }
-
     canvas {
       display: none;
     }
-
     #resolution-bar, #stream-status {
       background: rgba(0, 0, 0, 0.6);
       color: #0f0;
@@ -51,36 +45,92 @@
       margin-top: 12px;
       font-weight: bold;
     }
-
     #stream-status.offline {
       color: #f00;
+    }
+    .lang-switcher {
+      position: fixed;
+      top: 14px;
+      right: 14px;
     }
   </style>
 </head>
 <body>
-  <h1>🎥 البث المباشر عبر HLS</h1>
+  <div class="lang-switcher">
+    <button id="languageButton" onclick="toggleLanguage()">🌐</button>
+  </div>
+
+  <h1 data-i18n="pageTitle">🎥 البث المباشر عبر HLS</h1>
 
   <div class="controls">
-    <button class="btn" onclick="startStream()">▶️ تشغيل البث</button>
-    <button class="btn" onclick="stopStream()">⏹️ إيقاف البث</button>
-    <button class="btn" onclick="captureAndDownload()">📸 التقاط و حفظ الصورة</button>
+    <button class="btn" onclick="startStream()" data-i18n="startStream">▶️ تشغيل البث</button>
+    <button class="btn" onclick="stopStream()" data-i18n="stopStream">⏹️ إيقاف البث</button>
+    <button class="btn" onclick="captureAndDownload()" data-i18n="captureImage">📸 التقاط و حفظ الصورة</button>
     <select id="imgQuality" class="btn">
-      <option value="1">🖼️ جودة عالية (100%)</option>
-      <option value="0.8">📷 جودة متوسطة (80%)</option>
-      <option value="0.5">📉 جودة منخفضة (50%)</option>
+      <option value="1" data-i18n="highQuality">🖼️ جودة عالية (100%)</option>
+      <option value="0.8" data-i18n="mediumQuality">📷 جودة متوسطة (80%)</option>
+      <option value="0.5" data-i18n="lowQuality">📉 جودة منخفضة (50%)</option>
     </select>
   </div>
 
   <video id="live-video" class="video-js vjs-default-skin" controls autoplay muted playsinline width="640" height="360"></video>
 
-  <div id="resolution-bar">📏 الدقة: جاري التحميل...</div>
-  <div id="stream-status" class="offline">🚫 حالة البث: غير متصل</div>
+  <div id="resolution-bar" data-i18n="loadingResolution">📏 الدقة: جاري التحميل...</div>
+  <div id="stream-status" class="offline" data-i18n="offlineStatus">🚫 حالة البث: غير متصل</div>
 
   <canvas id="snapshot-canvas"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.0"></script>
   <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
   <script>
+    const translations = {
+      ar: {
+        pageTitle: "🎥 البث المباشر عبر HLS",
+        startStream: "▶️ تشغيل البث",
+        stopStream: "⏹️ إيقاف البث",
+        captureImage: "📸 التقاط و حفظ الصورة",
+        highQuality: "🖼️ جودة عالية (100%)",
+        mediumQuality: "📷 جودة متوسطة (80%)",
+        lowQuality: "📉 جودة منخفضة (50%)",
+        loadingResolution: "📏 الدقة: جاري التحميل...",
+        onlineStatus: "✅ حالة البث: متصل",
+        offlineStatus: "🚫 حالة البث: غير متصل"
+      },
+      en: {
+        pageTitle: "🎥 Live Streaming via HLS",
+        startStream: "▶️ Start Stream",
+        stopStream: "⏹️ Stop Stream",
+        captureImage: "📸 Capture & Save Image",
+        highQuality: "🖼️ High Quality (100%)",
+        mediumQuality: "📷 Medium Quality (80%)",
+        lowQuality: "📉 Low Quality (50%)",
+        loadingResolution: "📏 Resolution: Loading...",
+        onlineStatus: "✅ Stream Status: Online",
+        offlineStatus: "🚫 Stream Status: Offline"
+      }
+    };
+
+    let currentLang = localStorage.getItem('language') || 'ar';
+    function updateLanguage() {
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLang][key]) {
+          if (el.tagName === 'OPTION') {
+            el.textContent = translations[currentLang][key];
+          } else {
+            el.textContent = translations[currentLang][key];
+          }
+        }
+      });
+    }
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      localStorage.setItem('language', currentLang);
+      updateLanguage();
+    }
+
     const streamUrl = "https://smartlock-server.onrender.com/stream/hls/stream.m3u8";
     const video = document.getElementById('live-video');
     const canvas = document.getElementById('snapshot-canvas');
@@ -126,10 +176,10 @@
 
     function updateStreamStatus(online) {
       if (online) {
-        statusBar.textContent = "✅ حالة البث: متصل";
+        statusBar.textContent = translations[currentLang].onlineStatus;
         statusBar.classList.remove("offline");
       } else {
-        statusBar.textContent = "🚫 حالة البث: غير متصل";
+        statusBar.textContent = translations[currentLang].offlineStatus;
         statusBar.classList.add("offline");
       }
     }
@@ -149,9 +199,11 @@
 
     video.addEventListener('loadeddata', () => {
       setTimeout(() => {
-        resolutionBar.textContent = `📏 الدقة: ${video.videoWidth} × ${video.videoHeight}`;
+        resolutionBar.textContent = `📏 ${translations[currentLang].loadingResolution.replace("...", "")} ${video.videoWidth} × ${video.videoHeight}`;
       }, 500);
     });
+
+    document.addEventListener('DOMContentLoaded', updateLanguage);
   </script>
 </body>
 </html>
